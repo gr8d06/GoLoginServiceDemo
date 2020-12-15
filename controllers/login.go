@@ -16,8 +16,16 @@ func newLoginController() *loginController {
 }
 
 func (li loginController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 
 	if r.URL.Path == "/login" {
 		switch r.Method {
@@ -47,7 +55,7 @@ func (li *loginController) post(w http.ResponseWriter, r *http.Request) {
 
 	u, err := models.GetUserByUserName(c.UserName)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		//		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	encodeResponseAsJSON(u, w)

@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -10,7 +11,11 @@ import (
 type Credentials struct {
 	UserName string
 	PassWord string
+	OneKey   string
 }
+
+// a map of the userId and the encrypted password
+var storedCreds = make(map[string][]byte)
 
 //ValidateCredentials : takes a Credential and User object. Uses bCrypt to compare the stored hashed password, with the hashed version of the password that was received.
 func ValidateCredentials(cred Credentials) error {
@@ -20,12 +25,13 @@ func ValidateCredentials(cred Credentials) error {
 		return err
 	}
 	GenerateOneTimeKey(cred.UserName)
+	//would typically send the one time key to a secondary account(email, text, authapp), or have one generated.
+	tf := TwoFactor{cred.UserName, cred.OneKey}
 
+	err = (ValidateOneTimeKey(tf))
+	fmt.Println(err)
 	return err
 }
-
-// a map of the userId and the encrypted password
-var storedCreds = make(map[string][]byte)
 
 //AddCreds : add an entry to the storedCreds map.
 func AddCreds(userName string, strPass string) error {

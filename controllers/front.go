@@ -9,15 +9,11 @@ import (
 //RegisterControllers : does the front end routing to the proper controllers.
 func RegisterControllers() {
 
-	//uc := newUserController()
-	//http.Handle("/users", *uc)
-	//http.Handle("/users/", *uc)
-
 	lc := newLoginController()
 	http.Handle("/login", *lc)
 
 	tf := newTwoFactorController()
-	http.Handle("/twofactor", tf)
+	http.Handle("/twofactor", *tf)
 
 }
 
